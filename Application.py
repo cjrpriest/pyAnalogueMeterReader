@@ -108,17 +108,11 @@ class Application:
                 'filename': 'test.log',
                 'class': 'logging.FileHandler',
                 'formatter': 'standard'
-            },
-            'sys-logger6': {
-                'class': 'logging.handlers.SysLogHandler',
-                'address': '/var/run/syslog',
-                'facility': "local1",
-                'formatter': 'standard',
-            },
+            }
         },
         'loggers': {
             '': {
-                'handlers': ['default', 'sys-logger6'],
+                'handlers': ['default'],
                 'level': 'INFO',
                 'propagate': True
             },
