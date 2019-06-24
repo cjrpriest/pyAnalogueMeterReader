@@ -72,7 +72,7 @@ class TestMeterJitter(TestMeterBase):
             meter.update_with_dial_position(dial_position)
 
         first_average = meter.get_average_per_min(60, TestMeterBase.time("2017-04-26 13:00:03.000"))
-        self.assertEqual(first_average, 0)
+        self.assertEqual(0, first_average)
 
         for dial_position in [
             (TestMeterBase.time("2017-04-26 13:00:04.000"), 0.2),
@@ -83,19 +83,19 @@ class TestMeterJitter(TestMeterBase):
             meter.update_with_dial_position(dial_position)
 
         second_average = meter.get_average_per_min(60, TestMeterBase.time("2017-04-26 13:00:07.000"))
-        self.assertEqual(second_average, 0.2)
+        self.assertEqual(0, second_average)
 
         for dial_position in [
             (TestMeterBase.time("2017-04-26 13:00:04.000"), 0.2),
             (TestMeterBase.time("2017-04-26 13:00:05.000"), 0.3),
             (TestMeterBase.time("2017-04-26 13:00:06.000"), 0.2),
             (TestMeterBase.time("2017-04-26 13:00:07.000"), 0.3),
-            (TestMeterBase.time("2017-04-26 13:00:06.000"), 0.2)
+            (TestMeterBase.time("2017-04-26 13:00:08.000"), 0.2)
         ]:
             meter.update_with_dial_position(dial_position)
 
         third_average = meter.get_average_per_min(60, TestMeterBase.time("2017-04-26 13:00:07.000"))
-        self.assertEqual(third_average, 0.3)
+        self.assertEqual(0.3, third_average)
 
 
     def test_Given_some_jitter_followed_by_actual_movement__When_we_get_average__Then_average_is_taken_from_highest_jitter_dial_position(

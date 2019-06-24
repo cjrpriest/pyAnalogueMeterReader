@@ -25,7 +25,7 @@ class TestMeterEdgeCases(TestMeterBase):
         self.assertEqual(average, 0)
 
 
-    def test_Given_some_real_world_data__When_third_reading_is_taken__Then_the_average_is_taken_over_the_whole_lookback_period(self):
+    def test_Given_some_real_world_data__When_second_reading_is_taken__Then_the_average_is_taken_over_the_whole_lookback_period(self):
         # Arrange
         meter = Meter(Config())
 
@@ -48,15 +48,42 @@ class TestMeterEdgeCases(TestMeterBase):
         for dial_position in dial_positions:
             meter.update_with_dial_position(dial_position)
 
-        meter.get_average_per_min(120, TestMeterBase.time("2017-05-22 19:49:37.338"))
+        average1 = meter.get_average_per_min(120, TestMeterBase.time("2017-05-22 19:49:37.338"))
 
         meter.update_with_dial_position((TestMeterBase.time("2017-05-22 19:49:37.364"), 0.99))
 
-        meter.get_average_per_min(120, TestMeterBase.time("2017-05-22 19:49:37.450"))
-
         # Act
-        average = meter.get_average_per_min(120, TestMeterBase.time("2017-05-22 19:49:37.565"))
+        average2 = meter.get_average_per_min(120, TestMeterBase.time("2017-05-22 19:49:37.450"))
 
         # Assert
-        self.assertEqual(average, 0.29)
+        self.assertEqual(0.29, average2)
 
+    def test_Given_some_jitter_beyond_one_dial_increment__When_readings_are_taken_over_two_non_overlapping_periods__Then_the_first_reports_usage_but_the_second_does_not(self):
+        # Arrange
+        meter = Meter(Config())
+
+        dial_positions = [
+            (TestMeterBase.time("2017-05-22 12:00:00.000"), 0.5),
+            (TestMeterBase.time("2017-05-22 12:00:01.000"), 0.51),
+            (TestMeterBase.time("2017-05-22 12:00:02.000"), 0.5),
+            (TestMeterBase.time("2017-05-22 12:00:03.000"), 0.51),
+            (TestMeterBase.time("2017-05-22 12:00:04.000"), 0.5),
+            (TestMeterBase.time("2017-05-22 12:00:05.000"), 0.52),
+            (TestMeterBase.time("2017-05-22 12:00:06.000"), 0.5),
+            (TestMeterBase.time("2017-05-22 12:00:07.000"), 0.51),
+            (TestMeterBase.time("2017-05-22 12:00:08.000"), 0.5),
+            (TestMeterBase.time("2017-05-22 12:00:09.000"), 0.51),
+            (TestMeterBase.time("2017-05-22 12:00:10.000"), 0.5),
+            (TestMeterBase.time("2017-05-22 12:00:11.000"), 0.52),
+        ]
+
+        for dial_position in dial_positions:
+            meter.update_with_dial_position(dial_position)
+
+        # Act
+        first_average = meter.get_average_per_min(5, TestMeterBase.time("2017-05-22 12:00:05.000"))
+        second_average = meter.get_average_per_min(5, TestMeterBase.time("2017-05-22 12:00:11.000"))
+
+        # Assert
+        self.assertGreater(first_average, 0)
+        self.assertEqual(second_average, 0)

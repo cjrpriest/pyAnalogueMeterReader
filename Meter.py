@@ -10,7 +10,7 @@ from Config import *
 
 class Meter:
     __historical_dial_positions = None
-    # __furthest_dial_position = float('nan')
+    __furthest_dial_position = float(0)
 
     def __init__(self, config):
         """
@@ -41,6 +41,7 @@ class Meter:
         readings_in_window.sort(key=lambda x: x[0]) # sort by time, so earliest reading is first
 
         first_dial_position = readings_in_window[0][1]
+        last_dial_position = readings_in_window[len(readings_in_window)-1][1]
 
         greatest_dial_position = first_dial_position
         previous_dial_position = first_dial_position
@@ -48,6 +49,16 @@ class Meter:
         total_usage = 0
         absolute_total_usage = 0
         dial_movements_count = 0
+
+        if self.__furthest_dial_position == last_dial_position:
+            return float(0)
+
+        if last_dial_position > self.__furthest_dial_position:  # the most recent dial position appears to be further on than our furthest dial position
+            self.__furthest_dial_position = last_dial_position
+        elif last_dial_position < self.__furthest_dial_position:  # we've either gone past top position, or we are comparing to a historic measurement
+            if (last_dial_position + 1) - self.__furthest_dial_position < 0.5:  # if the dial has moved less than half a rotation since the last know furthest position, we assume it's gone past top position
+                self.__furthest_dial_position = last_dial_position
+
 
         for i in range(0, len(readings_in_window)):
             this_dial_position = float(readings_in_window[i][1])
