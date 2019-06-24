@@ -18,7 +18,7 @@ class TestFrameProcessor(TestCase):
         return
 
     def test_dial_reads_0_99(self):
-        self.Given_the_dial_is_in_position_x__When_the_dial_position_is_read__Then_position_x_is_returned(246, 0.99)
+        self.Given_the_dial_is_in_position_x__When_the_dial_position_is_read__Then_position_x_is_returned(243, 0.99)
         return
 
     def test_dial_reads_0_01(self):
