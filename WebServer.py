@@ -40,7 +40,9 @@ def video_feed():
 @_app.route('/usage_rate')
 def usage_rate():
     global _fn_get_latest_usage_rate
-    return Response(str(_fn_get_latest_usage_rate()))
+    response = str(_fn_get_latest_usage_rate())
+    logging.info("Returning usage_rate: " + response)
+    return Response(response)
 
 
 @_app.route('/meter_reading')
