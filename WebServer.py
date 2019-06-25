@@ -9,7 +9,7 @@ _app = Flask(__name__)
 
 _fn_get_latest_frame = None
 _fn_get_latest_usage_rate = None
-
+_fn_get_meter_reading = None
 
 def _generate_mjpeg_stream():
     global _fn_get_latest_frame
@@ -43,12 +43,20 @@ def usage_rate():
     return Response(str(_fn_get_latest_usage_rate()))
 
 
-def start(fn_get_latest_frame, fn_get_latest_usage_rate):
+@_app.route('/meter_reading')
+def meter_reading():
+    global _fn_get_meter_reading
+    return Response(str(_fn_get_meter_reading()))
+
+
+def start(fn_get_latest_frame, fn_get_latest_usage_rate, fn_get_meter_reading):
     logger = logging.getLogger(__name__)
     logger.info("Starting web server...")
     global _fn_get_latest_frame
     global _fn_get_latest_usage_rate
+    global _fn_get_meter_reading
     _fn_get_latest_frame = fn_get_latest_frame
     _fn_get_latest_usage_rate = fn_get_latest_usage_rate
+    _fn_get_meter_reading = fn_get_meter_reading
     thread.start_new_thread(_web_server_start, ())
     return

@@ -45,7 +45,8 @@ class Application:
 
         WebServer.start(
             self.__get_latest_frame,
-            self.__get_latest_usage_rate)
+            self.__get_latest_usage_rate,
+            self.__get_meter_reading)
 
         self.__meter.start_taking_regular_measurements(
             self.__config.meter_measurement_interval_ms,
@@ -71,6 +72,9 @@ class Application:
         return self.__meter.get_average_per_min(
             lookback_in_seconds=self.__config.average_rate_calculation_period_s,
             current_date_time=datetime.datetime.utcnow())
+
+    def __get_meter_reading(self):
+        return self.__meter.get_meter_reading()
 
     def __get_latest_dial_position(self):
         return self.__latest_dial_position
