@@ -40,15 +40,7 @@ class Meter:
         readings_in_window = filter(lambda x: x[0] >= window_start_time, readings) # filter out those readings not in the time window
         readings_in_window.sort(key=lambda x: x[0]) # sort by time, so earliest reading is first
 
-        first_dial_position = readings_in_window[0][1]
         last_dial_position = readings_in_window[len(readings_in_window)-1][1]
-
-        greatest_dial_position = first_dial_position
-        previous_dial_position = first_dial_position
-
-        total_usage = 0
-        absolute_total_usage = 0
-        dial_movements_count = 0
 
         if self.__furthest_dial_position == last_dial_position:
             return float(0)
@@ -59,9 +51,35 @@ class Meter:
             if (last_dial_position + 1) - self.__furthest_dial_position < 0.5:  # if the dial has moved less than half a rotation since the last know furthest position, we assume it's gone past top position
                 self.__furthest_dial_position = last_dial_position
 
+        total_usage = self.__get_total_usage(readings_in_window)
 
-        for i in range(0, len(readings_in_window)):
-            this_dial_position = float(readings_in_window[i][1])
+        if self.__config.print_debug_info:
+            self.__log_debug_info(current_date_time, lookback_in_seconds, readings_in_window)
+
+        # calculate the average usage over the desired period
+        readings_period_in_min = float(lookback_in_seconds) / 60
+        average = total_usage / readings_period_in_min
+        average = round(average, 2)
+
+        return average
+
+    def start_taking_regular_measurements(self, measurement_internal_ms, fn_get_latest_dial_position):
+        self.__logger.info("Starting to take measurements every %sms", measurement_internal_ms)
+        thread.start_new_thread(self.__take_regular_measurements,
+                                (measurement_internal_ms, fn_get_latest_dial_position))
+
+    def __get_total_usage(self, readings):
+        total_usage = 0
+        absolute_total_usage = 0
+        dial_movements_count = 0
+
+        first_dial_position = readings[0][1]
+
+        greatest_dial_position = first_dial_position
+        previous_dial_position = first_dial_position
+
+        for i in range(0, len(readings)):
+            this_dial_position = float(readings[i][1])
 
             if this_dial_position > greatest_dial_position: # if the dial appears to have moved forward since last reading
                 dial_position_movement = this_dial_position - greatest_dial_position # measure how much it's moved forward
@@ -83,9 +101,6 @@ class Meter:
 
             previous_dial_position = this_dial_position # reset marker for previous dial position
 
-        if self.__config.print_debug_info:
-            self.__log_debug_info(current_date_time, lookback_in_seconds, readings_in_window)
-
         if dial_movements_count >= 2:
             # look back all the readings, what was the average dial position change (forward or back) per dial movement?
             average_dial_position_change_per_movement = absolute_total_usage / dial_movements_count
@@ -96,17 +111,7 @@ class Meter:
             if average_dial_position_change_per_movement >= total_usage:
                 return 0
 
-        # calculate the average usage over the desired period
-        readings_period_in_min = float(lookback_in_seconds) / 60
-        average = total_usage / readings_period_in_min
-        average = round(average, 2)
-
-        return average
-
-    def start_taking_regular_measurements(self, measurement_internal_ms, fn_get_latest_dial_position):
-        self.__logger.info("Starting to take measurements every %sms", measurement_internal_ms)
-        thread.start_new_thread(self.__take_regular_measurements,
-                                (measurement_internal_ms, fn_get_latest_dial_position))
+        return total_usage
 
     def __take_regular_measurements(self, measurement_internal_ms, fn_get_latest_dial_position):
         interval_in_sec = float(measurement_internal_ms / 1000)
