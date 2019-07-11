@@ -1,9 +1,7 @@
 import time
 
 import cv2
-from imutils.video import VideoStream
-
-from Config import *
+from PiVideoStream import PiVideoStream
 
 class FrameSource:
     __frame_source = None
@@ -25,7 +23,7 @@ class FrameSource:
         input = config.frame_input
 
         if input == "picamera":
-            video_stream = VideoStream(usePiCamera=True, resolution=frame_size)\
+            video_stream = PiVideoStream(resolution=frame_size)\
                 .start()
 
             def get_next_frame():
