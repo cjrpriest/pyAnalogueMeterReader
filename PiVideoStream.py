@@ -1,8 +1,9 @@
+# borrowed from imutils https://github.com/jrosebr1/imutils/blob/master/imutils/video/pivideostream.py
+
 # import the necessary packages
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 from threading import Thread
-import cv2
 
 class PiVideoStream:
     def __init__(self, resolution=(320, 240), framerate=4):
