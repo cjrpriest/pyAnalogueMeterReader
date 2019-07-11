@@ -39,7 +39,7 @@ class Meter:
 
         window_start_time = current_date_time - timedelta(seconds=lookback_in_seconds)
 
-        readings_in_window = filter(lambda x: x[0] >= window_start_time, readings) # filter out those readings not in the time window
+        readings_in_window = filter(lambda x: x[0] >= window_start_time and x[0] <= current_date_time, readings) # filter out those readings not in the time window
         readings_in_window.sort(key=lambda x: x[0]) # sort by time, so earliest reading is first
 
         last_dial_position = readings_in_window[len(readings_in_window)-1][1]
