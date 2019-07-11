@@ -87,3 +87,30 @@ class TestMeterEdgeCases(TestMeterBase):
         # Assert
         self.assertGreater(first_average, 0)
         self.assertEqual(second_average, 0)
+
+    def test_Given_some_jitter_beyond_one_dial_increment__When_readings_are_taken_over_two_non_overlapping_periods__Then_the_first_reports_usage_but_the_second_does_not2(self):
+        # Arrange
+        meter = Meter(Config())
+
+        dial_positions = [
+            (TestMeterBase.time("2017-05-22 12:00:00.000"), 0.41),
+            (TestMeterBase.time("2017-05-22 12:00:01.000"), 0.42),
+            (TestMeterBase.time("2017-05-22 12:00:02.000"), 0.38),
+            (TestMeterBase.time("2017-05-22 12:00:03.000"), 0.42),
+            (TestMeterBase.time("2017-05-22 12:00:04.000"), 0.42),
+            (TestMeterBase.time("2017-05-22 12:00:05.000"), 0.41),
+            (TestMeterBase.time("2017-05-22 12:00:06.000"), 0.42),
+            (TestMeterBase.time("2017-05-22 12:00:07.000"), 0.42),
+            (TestMeterBase.time("2017-05-22 12:00:08.000"), 0.42),
+        ]
+
+        for dial_position in dial_positions:
+            meter.update_with_dial_position(dial_position)
+
+        # Act
+        first_average = meter.get_average_per_min(5, TestMeterBase.time("2017-05-22 12:00:05.000"))
+        second_average = meter.get_average_per_min(5, TestMeterBase.time("2017-05-22 12:00:07.000"))
+
+        # Assert
+        self.assertEqual(first_average, 0)
+        self.assertEqual(second_average, 0)
