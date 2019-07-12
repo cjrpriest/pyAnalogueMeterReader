@@ -6,7 +6,7 @@ import numpy as np
 from Config import *
 
 class FrameProcessor:
-    __colour_red = (255, 0, 255)
+    __colour_red = (0, 0, 255)
     __colour_blue = (255, 0, 0)
     __colour_green = (0, 255, 0)
     __colour_white = (255, 255, 255)
@@ -114,9 +114,9 @@ class FrameProcessor:
                 angle = round(angle, 0)
                 dial_position = round(angle / 360, 2)
                 cv2.putText(debug_frame_final_result, "Dial angle: " + str(angle), (20, 150), cv2.FONT_HERSHEY_SIMPLEX,
-                            0.5, (255, 255, 255), 2)
+                            0.5, self.__colour_red, 2)
                 cv2.putText(debug_frame_final_result, "Dial position: " + str(dial_position), (20, 170),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, self.__colour_red, 2)
                 break
 
         debug_frame = None
@@ -172,6 +172,6 @@ class FrameProcessor:
             org=(10, 20),
             fontFace=cv2.FONT_HERSHEY_SIMPLEX,
             fontScale=0.5,
-            color=self.__colour_white,
+            color=self.__colour_red,
             thickness=2)
         return
