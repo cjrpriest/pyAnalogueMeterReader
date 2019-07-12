@@ -12,8 +12,8 @@ class Config:
     frame_size = (320, 240)
     # centre_of_dial = (199, 86)
     centre_of_dial = (199, 92)
-    red_threshold_lower_boundary = np.array([0, 20, 100], dtype="uint8")
-    red_threshold_upper_boundary = np.array([40, 90, 200], dtype="uint8")
+    red_threshold_lower_boundary = 10
+    red_threshold_upper_boundary = 170
     min_approx_poly_area = 400
     meter_measurement_interval_ms = 5000
     meter_max_historical_measurements = 1000

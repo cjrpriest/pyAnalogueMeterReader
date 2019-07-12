@@ -36,10 +36,19 @@ class FrameProcessor:
 
         debug_frame_final_result = frame_rotated.copy()
 
-        red_only_mask_frame = cv2.inRange(
-            src=frame_rotated,
-            lowerb=self.__config.red_threshold_lower_boundary,
-            upperb=self.__config.red_threshold_upper_boundary)
+        frame_rotated2 = cv2.cvtColor(frame_rotated, cv2.COLOR_BGR2HSV)
+
+        red_only_mask_frame1 = cv2.inRange(
+            src=frame_rotated2,
+            lowerb=(0, 100, 20),
+            upperb=(self.__config.red_threshold_upper_boundary, 255, 255))
+
+        red_only_mask_frame2 = cv2.inRange(
+            src=frame_rotated2,
+            lowerb=(self.__config.red_threshold_lower_boundary, 100, 20),
+            upperb=(179, 255, 255))
+
+        red_only_mask_frame = red_only_mask_frame1 + red_only_mask_frame2
 
         red_only_frame = cv2.bitwise_and(
             src1=frame_rotated,
