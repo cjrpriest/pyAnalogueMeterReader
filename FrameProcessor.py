@@ -121,7 +121,7 @@ class FrameProcessor:
                 angle = angle + 270
                 angle = angle % 360
                 angle = round(angle, 0)
-                dial_position = round(angle / 360, 2)
+                dial_position = round(angle / 360, 1)
                 cv2.putText(debug_frame_final_result, "Dial angle: " + str(angle), (20, 150), cv2.FONT_HERSHEY_SIMPLEX,
                             0.5, self.__colour_red, 2)
                 cv2.putText(debug_frame_final_result, "Dial position: " + str(dial_position), (20, 170),
