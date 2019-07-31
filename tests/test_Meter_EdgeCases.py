@@ -114,3 +114,25 @@ class TestMeterEdgeCases(TestMeterBase):
         # Assert
         self.assertEqual(first_average, 0)
         self.assertEqual(second_average, 0)
+
+
+    def test_Given_some_meter_movements__When_two_readings_are_taken_with_no_new_dial_position_in_between_them__Then_both_are_non_zero(self):
+        # Arrange
+        meter = Meter(Config())
+
+        dial_positions = [
+            (TestMeterBase.time("2017-05-22 19:49:31.364"), 0.83),
+            (TestMeterBase.time("2017-05-22 19:49:33.365"), 0.88),
+            (TestMeterBase.time("2017-05-22 19:49:35.367"), 0.94),
+        ]
+
+        for dial_position in dial_positions:
+            meter.update_with_dial_position(dial_position)
+
+        # Act
+        average1 = meter.get_average_per_min(120, TestMeterBase.time("2017-05-22 19:49:37.338"))
+        average2 = meter.get_average_per_min(120, TestMeterBase.time("2017-05-22 19:49:37.450"))
+
+        # Assert
+        self.assertNotEqual(0, average1)
+        self.assertNotEqual(0, average2)
