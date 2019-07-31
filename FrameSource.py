@@ -1,7 +1,6 @@
 import time
 
 import cv2
-from PiVideoStream import PiVideoStream
 
 class FrameSource:
     __frame_source = None
@@ -23,6 +22,7 @@ class FrameSource:
         input = config.frame_input
 
         if input == "picamera":
+            from PiVideoStream import PiVideoStream
             video_stream = PiVideoStream(resolution=frame_size)\
                 .start()
 
