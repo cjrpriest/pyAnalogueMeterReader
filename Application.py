@@ -10,7 +10,6 @@ import logging.handlers
 from FrameSource import FrameSource
 from Meter import Meter
 from FrameProcessor import FrameProcessor
-from Config import *
 
 
 class Application:
