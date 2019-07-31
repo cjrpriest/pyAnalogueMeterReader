@@ -6,7 +6,7 @@ class Config:
         pass
 
     # frame_input = "picamera" # "picamera" to select the Raspberry Pi camera as the source
-    frame_input = "tests/20170524125832.avi"
+    frame_input = "tests/20170411122357.avi"
     generate_full_debug_frame = True
     image_rotation_degrees = -14
     frame_size = (320, 240)

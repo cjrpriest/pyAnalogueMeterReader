@@ -10,27 +10,27 @@ class TestFrameProcessor(TestCase):
     __test_file_name = "tests/20170411122357.avi"
 
     def test_dial_reads_0_59(self):
-        self.Given_the_dial_is_in_position_x__When_the_dial_position_is_read__Then_position_x_is_returned(100, 0.59)
+        self.Given_the_dial_is_in_position_x__When_the_dial_position_is_read__Then_position_x_is_returned(100, 0.6)
         return
 
     def test_dial_reads_0_86(self):
-        self.Given_the_dial_is_in_position_x__When_the_dial_position_is_read__Then_position_x_is_returned(200, 0.86)
+        self.Given_the_dial_is_in_position_x__When_the_dial_position_is_read__Then_position_x_is_returned(200, 0.8)
         return
 
     def test_dial_reads_0_99(self):
-        self.Given_the_dial_is_in_position_x__When_the_dial_position_is_read__Then_position_x_is_returned(243, 0.99)
+        self.Given_the_dial_is_in_position_x__When_the_dial_position_is_read__Then_position_x_is_returned(243, 0)
         return
 
     def test_dial_reads_0_01(self):
-        self.Given_the_dial_is_in_position_x__When_the_dial_position_is_read__Then_position_x_is_returned(247, 0.01)
+        self.Given_the_dial_is_in_position_x__When_the_dial_position_is_read__Then_position_x_is_returned(247, 0)
         return
 
     def test_dial_reads_0_17(self):
-        self.Given_the_dial_is_in_position_x__When_the_dial_position_is_read__Then_position_x_is_returned(300, 0.17)
+        self.Given_the_dial_is_in_position_x__When_the_dial_position_is_read__Then_position_x_is_returned(300, 0.2)
         return
 
     def test_dial_reads_0_41(self):
-        self.Given_the_dial_is_in_position_x__When_the_dial_position_is_read__Then_position_x_is_returned(400, 0.41)
+        self.Given_the_dial_is_in_position_x__When_the_dial_position_is_read__Then_position_x_is_returned(400, 0.4)
         return
 
     def Given_the_dial_is_in_position_x__When_the_dial_position_is_read__Then_position_x_is_returned(self, frame_no,
