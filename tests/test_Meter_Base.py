@@ -16,7 +16,7 @@ class TestMeterBase(TestCase):
         average = meter.get_average_per_min(lookback_in_seconds, current_time)
 
         # Assert
-        self.assertEqual(average, expected_average)
+        self.assertEqual(expected_average, average)
 
     @staticmethod
     def time(date_time_string):

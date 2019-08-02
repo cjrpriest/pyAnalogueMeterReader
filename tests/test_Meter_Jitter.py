@@ -56,8 +56,8 @@ class TestMeterJitter(TestMeterBase):
         second_average = meter.get_average_per_min(5, TestMeterBase.time("2017-04-26 13:00:06.000"))
 
         # Assert
-        self.assertEqual(first_average, 0)
-        self.assertEqual(second_average, 0)
+        self.assertEqual(0, first_average)
+        self.assertEqual(0, second_average)
 
     def test_Given_lots_of_jitter__When_the_dial_turns_slowly__Then_usage_is_not_missed_by_jitter_compensation(self):
         # Arrange
@@ -72,7 +72,7 @@ class TestMeterJitter(TestMeterBase):
             meter.update_with_dial_position(dial_position)
 
         first_average = meter.get_average_per_min(60, TestMeterBase.time("2017-04-26 13:00:03.000"))
-        self.assertEqual(0, first_average)
+        self.assertEqual(0.1, first_average)
 
         for dial_position in [
             (TestMeterBase.time("2017-04-26 13:00:04.000"), 0.2),
@@ -83,18 +83,18 @@ class TestMeterJitter(TestMeterBase):
             meter.update_with_dial_position(dial_position)
 
         second_average = meter.get_average_per_min(60, TestMeterBase.time("2017-04-26 13:00:07.000"))
-        self.assertEqual(0, second_average)
+        self.assertEqual(0.2, second_average)
 
         for dial_position in [
-            (TestMeterBase.time("2017-04-26 13:00:04.000"), 0.2),
-            (TestMeterBase.time("2017-04-26 13:00:05.000"), 0.3),
-            (TestMeterBase.time("2017-04-26 13:00:06.000"), 0.2),
-            (TestMeterBase.time("2017-04-26 13:00:07.000"), 0.3),
-            (TestMeterBase.time("2017-04-26 13:00:08.000"), 0.2)
+            (TestMeterBase.time("2017-04-26 13:00:08.000"), 0.2),
+            (TestMeterBase.time("2017-04-26 13:00:09.000"), 0.3),
+            (TestMeterBase.time("2017-04-26 13:00:10.000"), 0.2),
+            (TestMeterBase.time("2017-04-26 13:00:11.000"), 0.3),
+            (TestMeterBase.time("2017-04-26 13:00:12.000"), 0.2)
         ]:
             meter.update_with_dial_position(dial_position)
 
-        third_average = meter.get_average_per_min(60, TestMeterBase.time("2017-04-26 13:00:07.000"))
+        third_average = meter.get_average_per_min(60, TestMeterBase.time("2017-04-26 13:00:12.000"))
         self.assertEqual(0.3, third_average)
 
 
@@ -117,7 +117,7 @@ class TestMeterJitter(TestMeterBase):
                                           expected_average=0.2,
                                           current_time=TestMeterBase.time("2017-04-26 13:00:07.000"))
 
-    def test_Given_some_early_jitter_and_then_a_period_of_stability_over_90s__When_get_average_over_90s__Then_average_is_0(
+    def test_Given_some_early_jitter_and_then_a_period_of_stability_over_90s__When_get_average_over_90s__Then_average_is_0_01(
             self):
         dial_positions = [
             (TestMeterBase.time("2017-05-28 11:49:33.461"), 0.12),
@@ -141,5 +141,5 @@ class TestMeterJitter(TestMeterBase):
         ]
         self.assert_get_average_per_min(dial_positions,
                                           lookback_in_seconds=90,
-                                          expected_average=0,
+                                          expected_average=0.01,
                                           current_time=TestMeterBase.time("2017-05-28 11:51:02.468"))

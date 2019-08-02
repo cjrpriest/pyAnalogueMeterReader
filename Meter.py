@@ -8,7 +8,7 @@ import logging
 class Meter:
     __historical_dial_positions = None
     __furthest_dial_position = float(0)
-    __meter_reading = float(0);
+    __meter_reading = float(0)
 
     def __init__(self, config):
         """
@@ -28,14 +28,15 @@ class Meter:
             self.__historical_dial_positions.append((utc_datetime, dial_position))
 
     def get_meter_reading(self):
-        return self.__meter_reading;
-
+        return self.__meter_reading
 
     def get_average_per_min(self, lookback_in_seconds, current_date_time):
         if len(self.__historical_dial_positions) == 0:
             return float(0)
 
-        readings = list(self.__historical_dial_positions) # take a snapshot of the circular buffer into a list
+        historical_dial_positions = list(self.__historical_dial_positions) # take a snapshot of the circular buffer into a list
+
+        readings = self.__remove_jitter_from_readings(historical_dial_positions)
 
         window_start_time = current_date_time - timedelta(seconds=lookback_in_seconds)
 
@@ -47,8 +48,7 @@ class Meter:
         if self.__config.print_debug_info:
             self.__log_debug_info(current_date_time, lookback_in_seconds, readings_in_window)
 
-        if self.__furthest_dial_position == last_dial_position:
-            return float(0)
+        total_usage = self.__get_total_usage_over_readings(readings_in_window)
 
         if last_dial_position > self.__furthest_dial_position:  # the most recent dial position appears to be further on than our furthest dial position
             self.__furthest_dial_position = last_dial_position
@@ -57,8 +57,6 @@ class Meter:
             if (last_dial_position + 1) - self.__furthest_dial_position < 0.5:  # if the dial has moved less than half a rotation since the last know furthest position, we assume it's gone past top position
                 self.__furthest_dial_position = last_dial_position
                 self.__meter_reading = abs(self.__meter_reading) + 1 + last_dial_position
-
-        total_usage = self.__get_total_usage_over_readings(readings_in_window)
 
         # calculate the average usage over the desired period
         readings_period_in_min = float(lookback_in_seconds) / 60
@@ -71,6 +69,24 @@ class Meter:
         self.__logger.info("Starting to take measurements every %sms", measurement_internal_ms)
         thread.start_new_thread(self.__take_regular_measurements,
                                 (measurement_internal_ms, fn_get_latest_dial_position))
+
+    def __remove_jitter_from_readings(self, readings):
+        readings.sort(key=lambda x: x[0])
+        clean_readings = []
+        last_dial_position = float(0)
+        for reading in readings:
+            this_reading_dial_position = reading[1]
+            if this_reading_dial_position > last_dial_position:
+                clean_readings.append(reading)
+                last_dial_position = this_reading_dial_position
+            elif reading[1] == last_dial_position:
+                clean_readings.append(reading)
+            else: # we might have gone past top position, or it's jitter
+                if (this_reading_dial_position + 1) - last_dial_position < 0.5: # if the dial has moved less that half a rotation
+                    clean_readings.append(reading)
+                    last_dial_position = this_reading_dial_position
+
+        return clean_readings
 
     def __get_total_usage_over_readings(self, readings):
         total_usage = 0
@@ -104,16 +120,6 @@ class Meter:
             absolute_total_usage = absolute_total_usage + abs(dial_position_difference) # record absolute movement
 
             previous_dial_position = this_dial_position # reset marker for previous dial position
-
-        if dial_movements_count >= 2:
-            # look back all the readings, what was the average dial position change (forward or back) per dial movement?
-            average_dial_position_change_per_movement = absolute_total_usage / dial_movements_count
-
-            # if the average movement per reading (forward and back) was greater than or equal to the total movement
-            # (forward only) then it is likely that the reading was jumping backwards and forwards, but the dial wasn't
-            # actually moving, so return 0
-            if average_dial_position_change_per_movement >= total_usage:
-                return 0
 
         return total_usage
 

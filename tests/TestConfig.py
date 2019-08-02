@@ -12,10 +12,10 @@ class Config:
     frame_size = (320, 240)
     # centre_of_dial = (199, 86)
     centre_of_dial = (199, 92)
-    red_threshold_lower_boundary = 10
-    red_threshold_upper_boundary = 170
+    red_threshold_lower_boundary = 170
+    red_threshold_upper_boundary = 10
     min_approx_poly_area = 400
     meter_measurement_interval_ms = 5000
     meter_max_historical_measurements = 1000
-    average_rate_calculation_period_s = 90
+    average_rate_calculation_period_s = 5
     print_debug_info = False
