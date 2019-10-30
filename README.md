@@ -130,7 +130,7 @@ Run `./runTests.sh`!
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
 ## Acknowledgments
 * Adrian Rosebrock at the excellent [https://www.pyimagesearch.com](https://www.pyimagesearch.com) for learning material, and the Raspberry Pi setup instructions upon which this README is loosely based.
